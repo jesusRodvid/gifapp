@@ -1,51 +1,54 @@
- import React, { useState, useEffect } from 'react'
-import { GifGridItem } from './GifGridItem';
+//  import React, { useState, useEffect } from 'react'
+import { GifGridItem } from "./GifGridItem";
+// import { getGifs } from '../helpers/getGifs';
 
-export const GifGrid = ({category}) => {
-    
-    
-    const [images, setImages] = useState([]);
+import { useFetchGifs } from "../hooks/useFetchGifs";
 
-    useEffect( () =>{
+export const GifGrid = ({ category }) => {
+    const { data:images, loading } = useFetchGifs(category);
 
-        getGifs();
-    }, []) //solo se ejecuta la funcion getgif cuando el componente es renderizado por primera vez
-    
-    const getGifs = async() => {
-
-        const url = 'https://api.giphy.com/v1/gifs/search?q=elden&limit=10&offset=0&rating=g&lang=en&api_key=9CZOYwmFvHpwfWBdO1DHLOVKguNU81Mz'
-        const respo = await fetch ( url );
-        const {data} = await respo.json();
-
-        const gifs = data.map(img => {
-            return{
-                id: img.id,
-                title: img.title,
-                url: img.images?.downsized_medium.url
-            }
-
-        })
-
-        console.log(gifs);
-        setImages( gifs );
-    }
-    //getGifs();
-    
     return (
-        <div>
-            <h3>{ category }</h3>
-            <ol>
+        <>
+            <h3>{category}</h3>
+            { loading && <p>Loading</p> }
+            <div className="card-grid">
                 {
-                    images.map(  img => (
-                       <GifGridItem 
-                       key = {img.id}
-                       {...img }/>
-                    ))
-                    
-                }
+                
+                    images.map((img) => (
+                        <GifGridItem 
+                            key={img.id} 
+                            {...img} />
+                 ))}
+            </div>
+        </>
+    );
 
-            </ol>
-            
-        </div>
-    )
-}
+    //----------NO CUMSTONHOOK
+
+    // const [images, setImages] = useState([]);
+
+    //console.log(data);
+    // useEffect( () =>{
+    //     getGifs( category )
+    //         .then( setImages )
+    // }, [category]) //solo se ejecuta la funcion getgif cuando el componente es renderizado por primera vez
+
+    //getGifs();
+    // return (
+    //     <>
+    //     <h3>{ category }</h3>
+    //     { loading ? 'Cargando...':'Fin de carga'}
+    //     <div className="card-grid">
+
+    //             {
+    //                 images.map(  img => (
+    //                    <GifGridItem
+    //                    key = {img.id}
+    //                    {...img }/>
+    //                 ))
+    //             }
+    //     </div>
+    //     </>
+
+    // )
+};
